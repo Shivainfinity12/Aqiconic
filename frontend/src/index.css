@@ -1,0 +1,93 @@
+/* ===================================================
+   AQIONIC – Smart Air Quality Monitor
+   Design System & Global Styles
+   =================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Color Tokens */
+  --bg-base:        #07090f;
+  --bg-surface:     #0d1117;
+  --bg-elevated:    #161b27;
+  --bg-card:        #1a2133;
+  --bg-glass:       rgba(255,255,255,0.04);
+
+  --border-dim:     rgba(255,255,255,0.07);
+  --border-subtle:  rgba(255,255,255,0.12);
+  --border-accent:  rgba(99,179,237,0.35);
+
+  /* Brand Accents */
+  --cyan:           #38bdf8;
+  --cyan-dim:       rgba(56,189,248,0.15);
+  --cyan-glow:      rgba(56,189,248,0.35);
+  --teal:           #2dd4bf;
+  --teal-dim:       rgba(45,212,191,0.15);
+  --green:          #4ade80;
+  --green-dim:      rgba(74,222,128,0.15);
+  --yellow:         #facc15;
+  --yellow-dim:     rgba(250,204,21,0.15);
+  --orange:         #fb923c;
+  --orange-dim:     rgba(251,146,60,0.15);
+  --red:            #f87171;
+  --red-dim:        rgba(248,113,113,0.15);
+  --purple:         #a78bfa;
+  --purple-dim:     rgba(167,139,250,0.15);
+
+  /* Text */
+  --text-primary:   #f0f4ff;
+  --text-secondary: #94a3b8;
+  --text-muted:     #4b5563;
+
+  /* Gradients */
+  --grad-cyan:      linear-gradient(135deg, #0ea5e9, #38bdf8);
+  --grad-teal:      linear-gradient(135deg, #0d9488, #2dd4bf);
+  --grad-green:     linear-gradient(135deg, #16a34a, #4ade80);
+  --grad-yellow:    linear-gradient(135deg, #d97706, #facc15);
+  --grad-orange:    linear-gradient(135deg, #ea580c, #fb923c);
+  --grad-red:       linear-gradient(135deg, #dc2626, #f87171);
+  --grad-purple:    linear-gradient(135deg, #7c3aed, #a78bfa);
+  --grad-brand:     linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 50%, #4ade80 100%);
+
+  /* Spacing */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+
+  /* Typography */
+  --font-main:  'Outfit', 'Inter', sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+/* Utility */
+.mono { font-family: var(--font-mono); }
+.text-cyan    { color: var(--cyan); }
+.text-teal    { color: var(--teal); }
+.text-green   { color: var(--green); }
+.text-yellow  { color: var(--yellow); }
+.text-orange  { color: var(--orange); }
+.text-red     { color: var(--red); }
+.text-purple  { color: var(--purple); }
+.text-muted   { color: var(--text-secondary); }
