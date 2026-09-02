@@ -17,9 +17,7 @@ const io = new Server(server, {
   },
 });
 
-const PORT = 3000;
-
-const ESP32_URL = "http://10.68.20.75/api/sensors";
+const PORT = process.env.PORT || 3000;
 
 let latestSensorData = {
   pm25: 0,
@@ -45,7 +43,7 @@ app.get("/", (req, res) => {
 
 
 // ============================================================
-// SENSOR API
+// SENSOR API - GET (for frontend / debug)
 // ============================================================
 
 app.get("/api/sensors", (req, res) => {
@@ -54,60 +52,32 @@ app.get("/api/sensors", (req, res) => {
 
 
 // ============================================================
-// FETCH DATA FROM ESP32
+// SENSOR API - POST (ESP32 pushes data here)
 // ============================================================
 
-async function fetchESP32Data() {
+app.post("/api/sensors", (req, res) => {
 
-  try {
+  const data = req.body;
 
-    const response = await fetch(ESP32_URL);
+  latestSensorData = {
+    pm25:  Number(data.pm25  ?? 0),
+    aqi:   Number(data.aqi   ?? 0),
+    mq135: Number(data.mq135 ?? 0),
+    mq7:   Number(data.mq7   ?? 0),
+    mq8:   Number(data.mq8   ?? 0),
+    temp:  Number(data.temp  ?? 0),
+    rh:    Number(data.rh    ?? 0),
+    mist:  Number(data.mist  ?? 0),
+  };
 
-    if (!response.ok) {
-      throw new Error(
-        `ESP32 responded with ${response.status}`
-      );
-    }
+  // Broadcast updated data to all connected frontend clients
+  io.emit("sensorData", latestSensorData);
 
-    const data = await response.json();
+  console.log("ESP32 pushed data:", latestSensorData);
 
+  res.json({ status: "ok" });
 
-    latestSensorData = {
-      pm25: Number(data.pm25 ?? 0),
-      aqi: Number(data.aqi ?? 0),
-      mq135: Number(data.mq135 ?? 0),
-      mq7: Number(data.mq7 ?? 0),
-      mq8: Number(data.mq8 ?? 0),
-      temp: Number(data.temp ?? 0),
-      rh: Number(data.rh ?? 0),
-      mist: Number(data.mist ?? 0),
-    };
-
-
-    // console.log(
-    //   "ESP32 DATA:",
-    //   latestSensorData
-    // );
-
-
-    // Send data to all connected React clients
-
-    io.emit(
-      "sensorData",
-      latestSensorData
-    );
-
-  }
-
-  catch (error) {
-
-    console.error(
-      "ESP32 connection failed:",
-      error.message
-    );
-
-  }
-}
+});
 
 
 // ============================================================
@@ -121,14 +91,8 @@ io.on("connection", (socket) => {
     socket.id
   );
 
-
-  // Send latest data immediately
-
-  socket.emit(
-    "sensorData",
-    latestSensorData
-  );
-
+  // Send latest data immediately on connect
+  socket.emit("sensorData", latestSensorData);
 
   socket.on("disconnect", () => {
 
@@ -155,31 +119,10 @@ server.listen(
     console.log("====================================");
     console.log("       AQIONIC BACKEND");
     console.log("====================================");
-
-    console.log(
-      `Backend: http://localhost:${PORT}`
-    );
-
-    console.log(
-      `ESP32: ${ESP32_URL}`
-    );
-
+    console.log(`Backend running on port ${PORT}`);
+    console.log("ESP32 should POST to: /api/sensors");
     console.log("====================================");
     console.log("");
 
-    // Fetch immediately
-
-    fetchESP32Data();
-
   }
-);
-
-
-// ============================================================
-// POLL ESP32 EVERY 2 SECONDS
-// ============================================================
-
-setInterval(
-  fetchESP32Data,
-  2000
 );
